@@ -6,43 +6,19 @@
                     <h1>Settings</h1>
                     <div class="settings-container">
                         <div class="settings-btn-group">
-                            <ion-button shape="round" size="large" id="open-modal" expand="block">Change Password</ion-button>
-                            <ion-button shape="round" size="large" color="danger" href="/login">Log Out</ion-button>
+                            <ion-button shape="round" size="large" id="open-modal" expand="block" @click="openModal">Change Password</ion-button>
+                            <ion-button shape="round" size="large" color="danger" @click="logoutToast('top')">Log Out</ion-button>
                         </div>
                     </div>
                 </ion-col>
             </ion-row>
-            <ion-modal v-if="isShowModal" ref="modal" trigger="open-modal" @willDismiss="onWillDismiss">
-                <ion-header>
-                    <ion-toolbar>
-                    <ion-buttons slot="start">
-                        <ion-button @click="cancel()">Cancel</ion-button>
-                    </ion-buttons>
-                    <ion-title style="text-align: center;">Change Password</ion-title>
-                    <ion-buttons slot="end">
-                        <ion-button :strong="true" @click="confirm()">Confirm</ion-button>
-                    </ion-buttons>
-                    </ion-toolbar>
-                </ion-header>
-                <ion-content class="ion-padding">
-                    <ion-item>
-                        <ion-input
-                            label="New Password"
-                            label-placement="stacked"
-                            ref="input"
-                            type="text"
-                            placeholder="Enter your new password"
-                        ></ion-input>
-                    </ion-item>
-                    <ion-button class="d-flex justify-center" style="margin-top: 20px;">Save</ion-button>
-                </ion-content>
-            </ion-modal>
         </ion-grid>
     </ion-page>
 </template>
 
 <script>
 import { ref } from 'vue';
+import Modal from './modal/ChangePasswordModal.vue'
 import {
   IonGrid,
   IonRow,
@@ -55,8 +31,12 @@ import {
   IonTitle,
   IonModal,
   IonHeader,
-  IonToolbar
+  IonToolbar,
+  IonInput,
+  modalController,
+  toastController
 } from '@ionic/vue';
+import { useRouter } from 'vue-router';
 
 export default {
     components: { 
@@ -71,31 +51,51 @@ export default {
         IonButtons,
         IonTitle,
         IonModal,
-        IonHeader
+        IonHeader,
+        IonInput,
+        Modal
     },
     setup() {
         const message = ref('This modal example uses triggers to automatically open a modal when the button is clicked.');
-
-        const modal = ref();
-        const input = ref();
+        const router = useRouter()
         const isShowModal = ref(false)
 
-        const cancel = () => modal.dismiss(null, 'cancel');
+        const openModal = async () => {
+            const modal = await modalController.create({
+                component: Modal,
+            });
 
-        const confirm = () => {
-            isShowModal.value = false
-        };
+            modal.present();
 
-        const onWillDismiss = (ev) => {
-            if (ev.detail.role === 'confirm') {
-            message.value = `Hello, ${ev.detail.data}!`;
+            const { data, role } = await modal.onWillDismiss();
+
+            if (role === 'confirm') {
+            message.value = `Hello, ${data}!`;
             }
-        };
+        }
+
+        /**
+         * 'top' | 'middle' | 'bottom'
+         * @param {*} position 
+         */
+         async function logoutToast(position) {
+            const toast = await toastController.create({
+                message: 'You have been logged out successfully!',
+                duration: 1500,
+                position: position,
+                color: 'danger',
+                header: "Logged out",
+                animated: true
+            })
+            router.push({name: 'Login'})
+            await toast.present()
+            
+        }
 
         return {
-            cancel,
-            confirm,
-            onWillDismiss    
+            isShowModal,
+            openModal,
+            logoutToast
         }
     }
 }

@@ -5,7 +5,6 @@
         <h1 style="font-size: 48px;">Feeder App</h1>
       </div>
       <div id="container">
-        <span style="color: red; font-weight: 600;" v-if="isShowToast">Invalid Credentials!</span>
         <ion-list class="list-container">
           <ion-item>
             <ion-input class="input-login" placeholder="Enter your username" id="username-id" autofocus=""></ion-input>
@@ -21,7 +20,7 @@
 </template>
 
 <script>
-import { IonContent, IonPage, IonInput, IonItem, IonList, IonButton, IonToast, IonGrid } from '@ionic/vue'
+import { IonContent, IonPage, IonInput, IonItem, IonList, IonButton, IonToast, IonGrid, toastController } from '@ionic/vue'
 import { reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -31,7 +30,6 @@ export default {
     const router = useRouter()
     const modelUsername = ref("")
     const modelPassword = ref("")
-    const isShowToast = ref(false)
     const userProfile = reactive({
       username: "feeder",
       password: "123"
@@ -42,26 +40,44 @@ export default {
       modelPassword.value = document.getElementById("password-id").value
       if (userProfile.username === modelUsername.value && userProfile.password === modelPassword.value) {
         // Route to dashboard
-        isShowToast.value = false
         router.push({ name: 'Home' })
+        modelUsername.value = document.getElementById("username-id").value = ""
+        modelPassword.value = document.getElementById("password-id").value = ""
       } else {
-        isShowToast.value = true
+        // toast
+        loginError('top')
       }
     }
 
     const updateUsername = (event) => {
       modelUsername.value = event.target.value;
-    };
+    }
 
     const updatePassword = (event) => {
       modelPassword.value = event.target.value;
-    };
+    }
+
+    /**
+     * 'top' | 'middle' | 'bottom'
+     * @param {*} position 
+     */
+      async function loginError(position) {
+        const toast = await toastController.create({
+            message: 'Username or password is incorrect!',
+            duration: 1500,
+            position: position,
+            color: 'danger',
+            header: "Invalid credentials",
+            animated: true
+        })
+
+        await toast.present()
+    }
 
     return {
       userProfile,
       modelUsername,
       modelPassword,
-      isShowToast,
       validateLogin
     }
   }
