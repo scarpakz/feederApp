@@ -24,21 +24,40 @@
           </ion-tab-button>
         </ion-tab-bar>
       </ion-tabs>
+      <div class="set-schedule-container">
+        <button @click.prevent="showConfiguration" :class="rotateRight ? 'rotate-45' : 'rotate-0' " class="schedule-btn-float">
+          <ion-icon :icon="addOutline" />
+        </button>
+      </div>
     </ion-page>
 </template>   
   
 <script>
 import { IonPage, IonTabs, IonRouterOutlet, IonTabBar, IonTabButton, IonLabel, IonIcon, IonBadge } from '@ionic/vue';
-import { homeOutline, notificationsOutline, timerOutline, settingsOutline } from 'ionicons/icons';
+import { homeOutline, notificationsOutline, timerOutline, settingsOutline, addOutline } from 'ionicons/icons';
+import { ref } from 'vue'
 
 export default {
     components: { IonPage, IonTabs, IonRouterOutlet, IonTabBar, IonTabButton, IonLabel, IonIcon, IonBadge },
     setup () {
+      const rotateRight = ref(false)
+      
+      const showConfiguration = () => {
+        setRotate()
+      }
+
+      const setRotate = () => {
+        rotateRight.value = !rotateRight.value
+      }
+
       return {
         notificationsOutline,
         homeOutline,
         timerOutline,
-        settingsOutline
+        settingsOutline,
+        addOutline,
+        showConfiguration,
+        rotateRight
       }
     }
 }
@@ -88,6 +107,40 @@ export default {
   margin-top: 20px;
   width: 100%;
   padding: 0 10px;
+}
+.set-schedule-container {
+  position: fixed;
+  bottom: 100px;
+  right: 30px;
+}
+.schedule-btn-float {
+  font-size: 36px;
+  background-color: #000;
+  border-radius: 100%;
+  border: unset;
+  padding: 10px 13px;
+  box-shadow: -1px 1px 10px 10px #00ff00;
+  transition: .2s;
+  animation: glowing 1.5s infinite;
+}
+
+@keyframes glowing {
+  0% {
+    box-shadow: 0 0 10px #00ff00; /* Start with a green glow */
+  }
+  50% {
+    box-shadow: 0 0 20px #00ff00, 0 0 30px #00ff00; /* Intensify the glow */
+  }
+  100% {
+    box-shadow: 0 0 10px #00ff00; /* Return to the initial glow */
+  }
+}
+
+.rotate-45 {
+  transform: rotate(45deg);
+}
+.rotate-0 {
+  transform: rotate(0deg);
 }
 </style>
   
