@@ -1,0 +1,8 @@
+{
+  "appId": "com.ustpfeeder.iot",
+  "appName": "Feeder App",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  }
+}
