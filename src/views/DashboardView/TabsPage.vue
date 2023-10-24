@@ -24,6 +24,28 @@
           </ion-tab-button>
         </ion-tab-bar>
       </ion-tabs>
+      <div class="schedule-overlay" v-if="rotateRight">
+        <div class="button-group">
+          <button class="main-btn" @click.prevent="showFeeder = !showFeeder">Feeder Tank</button>
+          <div class="feeder-content" v-if="showFeeder">
+            <button class="feeder-btn">
+              Manual
+            </button>
+            <button class="feeder-btn">
+              Automatic
+            </button>
+          </div>
+          <button class="main-btn" @click.prevent="showWater = !showWater">Water Blocker</button>
+          <div class="feeder-content" v-if="showWater">
+            <button class="feeder-btn">
+              Manual
+            </button>
+            <button class="feeder-btn">
+              Automatic
+            </button>
+          </div>
+        </div>
+      </div>
       <div class="set-schedule-container">
         <button @click.prevent="showConfiguration" :class="rotateRight ? 'rotate-45' : 'rotate-0' " class="schedule-btn-float">
           <ion-icon :icon="addOutline" />
@@ -41,6 +63,8 @@ export default {
     components: { IonPage, IonTabs, IonRouterOutlet, IonTabBar, IonTabButton, IonLabel, IonIcon, IonBadge },
     setup () {
       const rotateRight = ref(false)
+      const showFeeder = ref(false)
+      const showWater = ref(false)
       
       const showConfiguration = () => {
         setRotate()
@@ -48,6 +72,14 @@ export default {
 
       const setRotate = () => {
         rotateRight.value = !rotateRight.value
+        if (!rotateRight.value) {
+          resetFeederConfig()
+        }
+      }
+
+      const resetFeederConfig = () => {
+        showFeeder.value = false
+        showWater.value = false
       }
 
       return {
@@ -57,7 +89,9 @@ export default {
         settingsOutline,
         addOutline,
         showConfiguration,
-        rotateRight
+        rotateRight,
+        showFeeder,
+        showWater
       }
     }
 }
@@ -123,7 +157,57 @@ export default {
   transition: .2s;
   animation: glowing 1.5s infinite;
 }
+.rotate-45 {
+  transform: rotate(45deg);
+}
+.rotate-0 {
+  transform: rotate(0deg);
+}
 
+.schedule-overlay {
+  position: absolute;
+  background-color: rgba(0,0,0, .8);
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  right: 40px;
+  bottom: 200px;
+}
+.button-group .main-btn {
+  width: 250px;
+  font-size: 24px;
+  background-color: #CD6161;
+  padding: 15px;
+  border-radius: 5px 5px 0 0;
+  font-weight: bold;
+  margin-top: 10px;
+  box-shadow: 1px 1px 5px 0px #8c8c8c;
+}
+
+.feeder-content {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+.feeder-btn {
+  padding: 10px;
+  background-color: #EB6363;
+  color: #fff;
+  font-weight: 600;
+}
+.feeder-btn:hover {
+  background-color: #393939;
+}
+/**
+* Animation Keyframes
+*/
 @keyframes glowing {
   0% {
     box-shadow: 0 0 10px #00ff00; /* Start with a green glow */
@@ -134,13 +218,6 @@ export default {
   100% {
     box-shadow: 0 0 10px #00ff00; /* Return to the initial glow */
   }
-}
-
-.rotate-45 {
-  transform: rotate(45deg);
-}
-.rotate-0 {
-  transform: rotate(0deg);
 }
 </style>
   
