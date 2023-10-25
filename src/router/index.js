@@ -41,6 +41,16 @@ const routes = [
         path: 'feeder-manual',
         name: 'FeederManual',
         component: () => import('../views/DashboardView/views/pages/FeederManualConfiguration.vue')
+      },
+      {
+        path: 'feeder-automatic',
+        name: 'FeederAutomatic',
+        component: () => import('../views/DashboardView/views/pages/FeederAutomaticConfiguration.vue')
+      },
+      {
+        path: 'water-automatic',
+        name: 'WaterAutomatic',
+        component: () => import('../views/DashboardView/views/pages/WaterAutomaticConfiguration.vue')
       }
     ]
   }

@@ -31,7 +31,7 @@
             <button class="feeder-btn" @click="goToFeederManualConfig()">
               Manual
             </button>
-            <button class="feeder-btn">
+            <button class="feeder-btn" @click="goToFeederAutomaticConfig()">
               Automatic
             </button>
           </div>
@@ -40,7 +40,7 @@
             <button class="feeder-btn" @click="goToWaterManualConfig()">
               Manual
             </button>
-            <button class="feeder-btn">
+            <button class="feeder-btn" @click="goToWaterAutomaticConfig()">
               Automatic
             </button>
           </div>
@@ -102,6 +102,20 @@ export default {
         router.push({ name: 'FeederManual' })
       }
 
+      const goToFeederAutomaticConfig = () => {
+        // Reset the button to actual state
+        resetRotateBtn()
+        resetFeederConfig()
+        router.push({ name: 'FeederAutomatic' })
+      }
+
+      const goToWaterAutomaticConfig = () => {
+        // Reset the button to actual state
+        resetRotateBtn()
+        resetFeederConfig()
+        router.push({ name: 'WaterAutomatic' })
+      }
+
       return {
         notificationsOutline,
         homeOutline,
@@ -113,7 +127,9 @@ export default {
         showFeeder,
         showWater,
         goToWaterManualConfig,
-        goToFeederManualConfig
+        goToFeederManualConfig,
+        goToFeederAutomaticConfig,
+        goToWaterAutomaticConfig
       }
     }
 }
