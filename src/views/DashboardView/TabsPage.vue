@@ -28,7 +28,7 @@
         <div class="button-group">
           <button class="main-btn" @click.prevent="showFeeder = !showFeeder">Feeder Tank</button>
           <div class="feeder-content" v-if="showFeeder">
-            <button class="feeder-btn">
+            <button class="feeder-btn" @click="goToFeederManualConfig()">
               Manual
             </button>
             <button class="feeder-btn">
@@ -37,7 +37,7 @@
           </div>
           <button class="main-btn" @click.prevent="showWater = !showWater">Water Blocker</button>
           <div class="feeder-content" v-if="showWater">
-            <button class="feeder-btn">
+            <button class="feeder-btn" @click="goToWaterManualConfig()">
               Manual
             </button>
             <button class="feeder-btn">
@@ -58,6 +58,7 @@
 import { IonPage, IonTabs, IonRouterOutlet, IonTabBar, IonTabButton, IonLabel, IonIcon, IonBadge } from '@ionic/vue';
 import { homeOutline, notificationsOutline, timerOutline, settingsOutline, addOutline } from 'ionicons/icons';
 import { ref } from 'vue'
+import { useRouter } from 'vue-router';
 
 export default {
     components: { IonPage, IonTabs, IonRouterOutlet, IonTabBar, IonTabButton, IonLabel, IonIcon, IonBadge },
@@ -65,6 +66,7 @@ export default {
       const rotateRight = ref(false)
       const showFeeder = ref(false)
       const showWater = ref(false)
+      const router = useRouter()
       
       const showConfiguration = () => {
         setRotate()
@@ -82,6 +84,24 @@ export default {
         showWater.value = false
       }
 
+      const resetRotateBtn = () => {
+        rotateRight.value = false
+      }
+
+      const goToWaterManualConfig = () => {
+        // Reset the button to actual state
+        resetRotateBtn()
+        resetFeederConfig()
+        router.push({ name: 'WaterManual' })
+      }
+
+      const goToFeederManualConfig = () => {
+        // Reset the button to actual state
+        resetRotateBtn()
+        resetFeederConfig()
+        router.push({ name: 'FeederManual' })
+      }
+
       return {
         notificationsOutline,
         homeOutline,
@@ -91,7 +111,9 @@ export default {
         showConfiguration,
         rotateRight,
         showFeeder,
-        showWater
+        showWater,
+        goToWaterManualConfig,
+        goToFeederManualConfig
       }
     }
 }

@@ -31,6 +31,16 @@ const routes = [
         path: 'settings',
         name: 'Settings',
         component: () => import('../views/DashboardView/views/SettingsView.vue')
+      },
+      {
+        path: 'water-manual',
+        name: 'WaterManual',
+        component: () => import('../views/DashboardView/views/pages/WaterManualConfiguration.vue')
+      },
+      {
+        path: 'feeder-manual',
+        name: 'FeederManual',
+        component: () => import('../views/DashboardView/views/pages/FeederManualConfiguration.vue')
       }
     ]
   }
