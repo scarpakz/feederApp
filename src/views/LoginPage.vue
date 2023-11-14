@@ -21,8 +21,9 @@
 
 <script>
 import { IonContent, IonPage, IonInput, IonItem, IonList, IonButton, IonToast, IonGrid, toastController } from '@ionic/vue'
-import { reactive, ref } from 'vue';
+import { onMounted, reactive, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
 
 export default {
   components: {IonContent, IonPage, IonInput, IonItem, IonList, IonButton, IonToast, IonGrid},
@@ -31,30 +32,20 @@ export default {
     const modelUsername = ref("")
     const modelPassword = ref("")
     const userProfile = reactive({
-      username: "feeder",
-      password: "123"
+      username: "",
+      password: ""
     })
 
-    const validateLogin = () => {
+    const validateLogin = async () => {
       modelUsername.value = document.getElementById("username-id").value
       modelPassword.value = document.getElementById("password-id").value
       if (userProfile.username === modelUsername.value && userProfile.password === modelPassword.value) {
         // Route to dashboard
         router.push({ name: 'Home' })
-        modelUsername.value = document.getElementById("username-id").value = ""
-        modelPassword.value = document.getElementById("password-id").value = ""
       } else {
         // toast
         loginError('top')
       }
-    }
-
-    const updateUsername = (event) => {
-      modelUsername.value = event.target.value;
-    }
-
-    const updatePassword = (event) => {
-      modelPassword.value = event.target.value;
     }
 
     /**
@@ -73,6 +64,16 @@ export default {
 
         await toast.present()
     }
+
+    const loadUserCredentials = async () => {
+      const response = await axios.get('http://localhost:3000/users')
+      userProfile.username = response.data[0].username
+      userProfile.password = response.data[0].password
+    }
+
+    onMounted(async () => {
+      await loadUserCredentials()
+    })
 
     return {
       userProfile,
