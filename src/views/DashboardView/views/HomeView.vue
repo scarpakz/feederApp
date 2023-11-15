@@ -12,7 +12,7 @@
               <template v-for="item in activeDataList" :key="item.id">
                 <div class="active-schedule-container">
                   <div>
-                    <div class="active-detail active-title">{{ item.title }}</div>
+                    <div class="active-detail active-title">{{ item.id == 1 ? 'Water Blocker' : 'Feeder Tank' }}</div>
                     <div class="active-detail">{{ item.date }}</div>
                     <div class="active-detail">{{ item.time }}</div>
                   </div>
@@ -26,45 +26,21 @@
 </template>
 
 <script>
-import { ref, onUnmounted } from 'vue';
+import { ref, onUnmounted, onMounted } from 'vue';
 import {
   IonGrid,
   IonRow,
   IonCol,
   IonPage
 } from '@ionic/vue';
+import axios from 'axios';
 
 export default {
   components: { IonGrid, IonRow, IonCol, IonPage },
   setup() {
     const currentTime = ref('')
     const currentDate = ref('')
-    const activeDataList = ref([
-      {
-          title: "Feeder Tank",
-          date: "October 10, 2023",
-          time: "1:30 PM",
-          status: 'success'
-      },
-      {
-          title: "Water Blocker",
-          date: "November 5, 2023",
-          time: "9:45 AM",
-          status: 'success'
-      },
-      {
-          title: "Water Blocker",
-          date: "December 15, 2023",
-          time: "4:15 PM",
-          status: 'success'
-      },
-      {
-          title: "Feeder Tank",
-          date: "January 20, 2024",
-          time: "7:00 PM",
-          status: 'error'
-      }
-    ])
+    const activeDataList = ref([])
 
     const updateTimeAndDate = () => {
       const now = new Date();
@@ -85,6 +61,14 @@ export default {
       currentDate.value = dateString;
     }
 
+    const loadSchedules = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/schedules');
+        console.log(response)
+        activeDataList.value = response.data
+      } catch (e) { return e }
+    };
+
     // Update the time and date initially
     updateTimeAndDate()
 
@@ -92,9 +76,13 @@ export default {
     const intervalId = setInterval(updateTimeAndDate, 1000);
 
     // Stop the interval when the component is unmounted
-    onUnmounted(() => {
+    onUnmounted(async () => {
       clearInterval(intervalId)
     });
+    
+    onMounted(async () => {
+      await loadSchedules()
+    })
 
     return {
       currentTime,
