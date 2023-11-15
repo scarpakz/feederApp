@@ -9,8 +9,8 @@
                 <template v-for="item in activeDataList" :key="item.id">
                     <div class="notification-container">
                     <div>
-                        <div class="active-detail" :class="item.status == 'success' ? 'success' : 'error'">{{ item.description }}</div>
-                        <div class="active-detail">{{ item.title }}</div>
+                        <div class="active-detail">{{ item.message }}</div>
+                        <div class="active-detail">{{ item.header }}</div>
                         <div class="active-detail">{{ item.date }}</div>
                         <div class="active-detail">{{ item.time }}</div>
                     </div>
@@ -24,48 +24,29 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue';
+import { defineComponent, onMounted, ref } from 'vue';
 import {
   IonGrid,
   IonRow,
   IonCol,
   IonPage
 } from '@ionic/vue';
+import axios from 'axios';
 
 export default defineComponent({
     name: "Notification",
     components: { IonGrid, IonRow, IonCol, IonPage },
     setup () {
-        const activeDataList = ref([
-            {
-                title: "Feeder Tank",
-                description: "Successfully Set",
-                date: "October 10, 2023",
-                time: "1:30 PM",
-                status: 'success'
-            },
-            {
-                title: "Water Blocker",
-                description: "Water successfully closed",
-                date: "November 5, 2023",
-                time: "9:45 AM",
-                status: 'success'
-            },
-            {
-                title: "Water Blocker",
-                description: "Barrier successfully opened",
-                date: "December 15, 2023",
-                time: "4:15 PM",
-                status: 'success'
-            },
-            {
-                title: "Feeder Tank",
-                description: "Error Feeder Process",
-                date: "January 20, 2024",
-                time: "7:00 PM",
-                status: 'error'
-            }
-        ])
+        const activeDataList = ref([])
+
+        const loadNotifications = async () => {
+            const response = await axios.get('http://localhost:3000/notifications')
+            activeDataList.value = response.data
+        }
+
+        onMounted(() => {
+            loadNotifications()
+        })
 
         return {
             activeDataList
