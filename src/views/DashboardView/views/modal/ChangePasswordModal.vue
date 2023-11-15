@@ -31,6 +31,7 @@ import {
     toastController
 } from '@ionic/vue';
 import { ref } from 'vue';
+import axios from 'axios';
 
 export default {
     components: {
@@ -46,9 +47,16 @@ export default {
     setup() {
         const password = ref();
         const cancel = () => modalController.dismiss(null, 'cancel')
-        const confirm = () => {
+        const confirm = async () => {
+            await changePassword()
             modalController.dismiss(password.value, 'confirm')
             presentToast('top')
+        }
+
+        const changePassword = async () => {
+            await axios.post('http://localhost:3000/update-password', {
+                password: password.value,
+            });
         }
 
         /**
