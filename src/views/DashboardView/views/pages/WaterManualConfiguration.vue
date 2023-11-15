@@ -50,6 +50,7 @@ import {
   toastController
 } from '@ionic/vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
 
 export default {
     components: { IonPage, IonRow, IonCol, IonGrid, IonItem, IonLabel, IonSpinner, IonIcon },
@@ -59,10 +60,13 @@ export default {
         const countdown = ref(9)
         const router = useRouter()
 
-        const startCountdown = (command) => {
+        const startCountdown = async (command) => {
             if (command == 'block') {
                 showBlock.value = false
                 isCountdown.value = true
+                await axios.post('http://localhost:3000/update-blocker-status', {
+                    status: 'close'
+                });
                 const timer = setInterval(() => {
                     countdown.value--;
                     if (countdown.value === 0) {
@@ -74,6 +78,9 @@ export default {
             } else {
                 showBlock.value = false
                 isCountdown.value = true
+                await axios.post('http://localhost:3000/update-blocker-status', {
+                    status: 'open'
+                });
                 const timer = setInterval(() => {
                     countdown.value--;
                     if (countdown.value === 0) {

@@ -50,6 +50,7 @@ import {
   toastController
 } from '@ionic/vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
 
 export default {
     components: { IonPage, IonRow, IonCol, IonGrid, IonItem, IonLabel, IonSpinner, IonIcon },
@@ -59,16 +60,22 @@ export default {
         const countdown = ref(9)
         const router = useRouter()
 
-        const startCountdown = () => {
+        const startCountdown = async () => {
             showBlock.value = false
             isCountdown.value = true
-            const timer = setInterval(() => {
+            await axios.post('http://localhost:3000/update-feeder-status', {
+                status: 'open'
+            });
+            const timer = setInterval(async () => {
                 countdown.value--;
                 if (countdown.value === 0) {
                     isCountdown.value = false
                     clearInterval(timer) // Stop the countdown when it reaches 0
                     showBlock.value = true
                     presentToast('top')
+                    await axios.post('http://localhost:3000/update-feeder-status', {
+                        status: 'close'
+                    });
                 }
             }, 1000) // Update the countdown every second
             // reset to 9 for countdown
