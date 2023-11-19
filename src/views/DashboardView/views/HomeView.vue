@@ -8,16 +8,21 @@
                     <h5 class="date-value">{{ currentDate }}</h5>
                 </div>
             </ion-col>
-            <ion-col size="12">
+            <ion-col size="12" v-if="activeDataList.length > 0">
               <template v-for="item in activeDataList" :key="item.id">
                 <div class="active-schedule-container">
                   <div>
-                    <div class="active-detail active-title">{{ item.id == 1 ? 'Water Blocker' : 'Feeder Tank' }}</div>
+                    <div class="active-detail active-title">{{ item.name }} <button @click="deleteSchedule(item.id, item.name)">Delete</button></div>
                     <div class="active-detail">{{ item.date }}</div>
                     <div class="active-detail">{{ item.time }}</div>
                   </div>
                 </div>
               </template>
+            </ion-col>
+            <ion-col size="12" v-else>
+              <div class="active-schedule-container">
+                <span>Set a schedule by clicking the + icon below</span>
+              </div>
             </ion-col>
         </ion-row>
     </ion-grid>
@@ -31,7 +36,8 @@ import {
   IonGrid,
   IonRow,
   IonCol,
-  IonPage
+  IonPage,
+  toastController
 } from '@ionic/vue';
 import axios from 'axios';
 
@@ -69,6 +75,56 @@ export default {
       } catch (e) { return e }
     };
 
+    const deleteSchedule = async (id, type) => {
+      if (type == 'Water Blocker') {
+        axios.post('http://localhost:3000/delete-blocker-schedule', {
+          id: id,
+        })
+        .then(async () => {
+          // Handle the response if needed
+          presentToast('top')
+          await loadSchedules()
+        })
+        .catch(error => {
+          // Handle errors
+          console.error(error);
+        });
+      } else {
+        axios.post('http://localhost:3000/delete-feeder-schedule', {
+          id: id,
+        })
+        .then(async ()=> {
+          // Handle the response if needed
+          presentToast('top')
+          await loadSchedules()
+        })
+        .catch(error => {
+          // Handle errors
+          console.error(error);
+        });
+      }
+    }
+
+    /**
+     * 'top' | 'middle' | 'bottom'
+     * @param {*} position 
+     */
+    async function presentToast(position) {
+      const toast = await toastController.create({
+          message: 'No errors were encountered during the process.',
+          duration: 3000,
+          position: position,
+          color: 'primary',
+          header: "Deleted!",
+          animated: true
+      })
+      setTimeout(() => {
+          location.reload()
+      }, 3000)
+      await toast.present()
+        
+    }
+
     // Update the time and date initially
     updateTimeAndDate()
 
@@ -87,7 +143,8 @@ export default {
     return {
       currentTime,
       currentDate,
-      activeDataList
+      activeDataList,
+      deleteSchedule
     };
   },
 };
@@ -105,6 +162,14 @@ div {
 }
 .active-title {
   font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+}
+.active-title button {
+  background-color: rgb(246, 48, 48);
+  padding: 5px 20px;
+  font-weight: 600;
+  border-radius: 5px;
 }
 .active-schedule-container {
   background-color: #ffffff;

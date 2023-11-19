@@ -10,10 +10,10 @@
                         <div><button class="back-btn" @click="router.push({name: 'Home'})"><ion-icon :icon="arrowBackOutline"></ion-icon> Back</button></div>
                         <div class="form-group">
                             <div class="input-group">
-                                <input type="date" name="" id="">
+                                <input type="date" name="" v-model="data.dateInput" id="">
                             </div>
                             <div class="input-group">
-                                <input type="time" name="" placeholder="02:03 AM" id="">
+                                <input type="time" name="" v-model="data.timeInput" placeholder="02:03 AM" id="">
                             </div>
                             <div class="input-group">
                                 <ion-button @click="save()">Save</ion-button>
@@ -41,14 +41,37 @@ import {
     toastController
 } from '@ionic/vue'
 import { useRouter } from 'vue-router';
+import axios from 'axios';
+import { reactive } from 'vue';
 
 export default {
     components: { IonPage, IonRow, IonCol, IonGrid, IonItem, IonLabel, IonSpinner, IonIcon, IonButton },
     setup() {
         const router = useRouter()
+        const data = reactive({
+            dateInput: '',
+            timeInput: '',
+        })
 
         const save = () => {
-            presentToast('top')
+
+            // Combine date and time inputs into a single datetime string
+            const datetimeString = `${data.dateInput} ${data.timeInput}`;
+            
+            // Use axios or another HTTP library to send the data to your server
+            // Replace 'your-api-endpoint' with your actual API endpoint
+            axios.post('http://localhost:3000/add-feeder-schedule', {
+                date: datetimeString,
+            })
+            .then(response => {
+                // Handle the response if needed
+                presentToast('top')
+            })
+            .catch(error => {
+                // Handle errors
+                console.error(error);
+            });
+            
         }
 
         /**
@@ -58,21 +81,24 @@ export default {
          async function presentToast(position) {
             const toast = await toastController.create({
                 message: 'No errors were encountered during the process.',
-                duration: 5000,
+                duration: 3000,
                 position: position,
                 color: 'primary',
                 header: "Success!",
                 animated: true
             })
-
+            setTimeout(() => {
+                location.reload()
+            }, 3000)
             await toast.present()
-            router.push({name: 'Home'})
+            
         }
 
         return {
             arrowBackOutline,
             router,
-            save
+            save,
+            data
         }
     }
 }
