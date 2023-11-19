@@ -23,7 +23,7 @@
                             
                         </div>
                         <div class="config-button">
-                            <button class="block-btn" v-if="showBlock" @click="startCountdown('block')">BLOCK</button>
+                            <button class="block-btn" v-if="showBlock && !isBlockerClose" @click="startCountdown('block')">BLOCK</button>
                             <template v-else>
                                 <button class="unblock-btn" v-if="!isCountdown" @click="startCountdown('unblock')">UNBLOCK</button>
                             </template>
@@ -59,6 +59,7 @@ export default {
         const isCountdown = ref(false)
         const countdown = ref(9)
         const router = useRouter()
+        const isBlockerClose = ref(false)
 
         const startCountdown = async (command) => {
             if (command == 'block') {
@@ -67,26 +68,29 @@ export default {
                 await axios.post('http://localhost:3000/update-blocker-status', {
                     status: 'close'
                 });
-                const timer = setInterval(() => {
+                const timer = setInterval(async () => {
                     countdown.value--;
                     if (countdown.value === 0) {
                         isCountdown.value = false
                         clearInterval(timer) // Stop the countdown when it reaches 0
+                        await getBlockerStatus()
                         presentToast('top')
                     }
                 }, 1000) // Update the countdown every second
             } else {
                 showBlock.value = false
                 isCountdown.value = true
-                await axios.post('http://localhost:3000/update-blocker-status', {
+                const test = await axios.post('http://localhost:3000/update-blocker-status', {
                     status: 'open'
                 });
-                const timer = setInterval(() => {
+                console.log(test)
+                const timer = setInterval(async () => {
                     countdown.value--;
                     if (countdown.value === 0) {
                         isCountdown.value = false
                         clearInterval(timer) // Stop the countdown when it reaches 0
                         showBlock.value = true
+                        await getBlockerStatus()
                         presentToast('top')
                     }
                 }, 1000) // Update the countdown every second
@@ -114,8 +118,14 @@ export default {
             await toast.present()
         }
 
-        onMounted(() => {
+        const getBlockerStatus = async () => {
+            const response = await axios.get('http://localhost:3000/blocker/status')
+            response.data[0].status == 'close' ? isBlockerClose.value = true : isBlockerClose.value = false
+        }
+
+        onMounted(async () => {
             // Check the status from the backend if water is open or not
+            await getBlockerStatus()
         })
 
         return {
@@ -124,7 +134,8 @@ export default {
             isCountdown,
             startCountdown,
             countdown,
-            router
+            router,
+            isBlockerClose
         }
     }
 }
