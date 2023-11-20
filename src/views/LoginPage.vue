@@ -2,7 +2,7 @@
   <ion-page class="content-bg">
     <ion-grid :fullscreen="true">
       <div class="brand-container">
-        <h1 style="font-size: 48px;">Feeder App</h1>
+        <img src="./../FWsLOGO.png" width="140" height="140" alt="">
       </div>
       <div id="container">
         <ion-list class="list-container">
