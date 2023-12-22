@@ -66,7 +66,8 @@ export default {
     }
 
     const loadUserCredentials = async () => {
-      const response = await axios.get('http://localhost:3000/users')
+      const response = await axios.get('https://feeder-backend.onrender.com/users')
+
       userProfile.username = response.data[0].username
       userProfile.password = response.data[0].password
     }

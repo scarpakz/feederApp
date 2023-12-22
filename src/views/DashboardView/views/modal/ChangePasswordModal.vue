@@ -54,7 +54,7 @@ export default {
         }
 
         const changePassword = async () => {
-            await axios.post('http://localhost:3000/update-password', {
+            await axios.post('https://feeder-backend.onrender.com/update-password', {
                 password: password.value,
             });
         }

@@ -60,7 +60,7 @@ export default {
 
             // Use axios or another HTTP library to send the data to your server
             // Replace 'your-api-endpoint' with your actual API endpoint
-            axios.post('http://localhost:3000/add-blocker-schedule', {
+            axios.post('https://feeder-backend.onrender.com/add-blocker-schedule', {
                 date: datetimeString,
             })
             .then(response => {

@@ -10,7 +10,7 @@
           <ion-tab-button tab="notification" href="/dashboard/notification">
             <ion-icon :icon="notificationsOutline" />
             <ion-label>Notification</ion-label>
-            <ion-badge color="danger">4</ion-badge>
+            <ion-badge color="danger">{{ notifLength }}</ion-badge>
           </ion-tab-button>
 <!--   
           <ion-tab-button tab="history" href="/history">
@@ -57,8 +57,9 @@
 <script>
 import { IonPage, IonTabs, IonRouterOutlet, IonTabBar, IonTabButton, IonLabel, IonIcon, IonBadge } from '@ionic/vue';
 import { homeOutline, notificationsOutline, timerOutline, settingsOutline, addOutline } from 'ionicons/icons';
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router';
+import axios from 'axios'
 
 export default {
     components: { IonPage, IonTabs, IonRouterOutlet, IonTabBar, IonTabButton, IonLabel, IonIcon, IonBadge },
@@ -67,6 +68,7 @@ export default {
       const showFeeder = ref(false)
       const showWater = ref(false)
       const router = useRouter()
+      const notifLength = ref(0)
       
       const showConfiguration = () => {
         setRotate()
@@ -116,6 +118,15 @@ export default {
         router.push({ name: 'WaterAutomatic' })
       }
 
+      const loadNotifications = async () => {
+        const response = await axios.get('https://feeder-backend.onrender.com/notifications')
+        notifLength.value = response.data.length
+      }
+
+      onMounted(() => {
+          loadNotifications()
+      })
+
       return {
         notificationsOutline,
         homeOutline,
@@ -129,7 +140,8 @@ export default {
         goToWaterManualConfig,
         goToFeederManualConfig,
         goToFeederAutomaticConfig,
-        goToWaterAutomaticConfig
+        goToWaterAutomaticConfig,
+        notifLength
       }
     }
 }

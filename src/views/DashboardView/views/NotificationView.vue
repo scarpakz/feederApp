@@ -40,7 +40,7 @@ export default defineComponent({
         const activeDataList = ref([])
 
         const loadNotifications = async () => {
-            const response = await axios.get('http://localhost:3000/notifications')
+            const response = await axios.get('https://feeder-backend.onrender.com/notifications')
             activeDataList.value = response.data
         }
 

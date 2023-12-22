@@ -65,7 +65,7 @@ export default {
             if (command == 'block') {
                 showBlock.value = false
                 isCountdown.value = true
-                await axios.post('http://localhost:3000/update-blocker-status', {
+                await axios.post('https://feeder-backend.onrender.com/update-blocker-status', {
                     status: 'close'
                 });
                 const timer = setInterval(async () => {
@@ -80,7 +80,7 @@ export default {
             } else {
                 showBlock.value = false
                 isCountdown.value = true
-                const test = await axios.post('http://localhost:3000/update-blocker-status', {
+                const test = await axios.post('https://feeder-backend.onrender.com/update-blocker-status', {
                     status: 'open'
                 });
                 console.log(test)
@@ -119,7 +119,7 @@ export default {
         }
 
         const getBlockerStatus = async () => {
-            const response = await axios.get('http://localhost:3000/blocker/status')
+            const response = await axios.get('https://feeder-backend.onrender.com/blocker/status')
             response.data[0].status == 'close' ? isBlockerClose.value = true : isBlockerClose.value = false
         }
 

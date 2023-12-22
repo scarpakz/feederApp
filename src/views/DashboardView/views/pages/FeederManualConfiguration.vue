@@ -63,7 +63,7 @@ export default {
         const startCountdown = async () => {
             showBlock.value = false
             isCountdown.value = true
-            await axios.post('http://localhost:3000/update-feeder-status', {
+            await axios.post('https://feeder-backend.onrender.com/update-feeder-status', {
                 status: 'open'
             });
             const timer = setInterval(async () => {
@@ -73,7 +73,7 @@ export default {
                     clearInterval(timer) // Stop the countdown when it reaches 0
                     showBlock.value = true
                     presentToast('top')
-                    await axios.post('http://localhost:3000/update-feeder-status', {
+                    await axios.post('https://feeder-backend.onrender.com/update-feeder-status', {
                         status: 'close'
                     });
                 }
