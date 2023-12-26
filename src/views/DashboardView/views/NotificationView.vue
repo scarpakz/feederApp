@@ -40,8 +40,19 @@ export default defineComponent({
         const activeDataList = ref([])
 
         const loadNotifications = async () => {
-            const response = await axios.get('https://feeder-backend.onrender.com/notifications')
-            activeDataList.value = response.data
+            try {
+                const response = await axios.get('https://feeder-backend.onrender.com/notifications');
+                const data = response.data;
+
+                // Update the activeDataList ref with the sorted data
+                activeDataList.value = // Sort the data array by date and time
+                    data.sort((a, b) => {
+                        const dateComparison = new Date(b.date + ' ' + b.time) - new Date(a.date + ' ' + a.time);
+                        return dateComparison === 0 ? new Date(b.time) - new Date(a.time) : dateComparison;
+                });
+            } catch (error) {
+                console.error('Error loading notifications:', error);
+            }
         }
 
         onMounted(() => {
